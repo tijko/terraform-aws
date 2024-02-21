@@ -101,3 +101,7 @@ resource "local_file" "ssh_key" {
   filename = "${aws_key_pair.my-key-pair.key_name}.pem"
   content = tls_private_key.private-key.private_key_pem
 }
+
+output "aws_ec2_ips" {
+  value = ["${aws_instance.dev_node.*.public_ip}"]
+}
