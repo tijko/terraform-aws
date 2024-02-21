@@ -12,7 +12,7 @@ resource "aws_subnet" "tijko_public_subnet" {
   vpc_id                  = aws_vpc.tijko_vpc.id
   cidr_block              = "10.123.1.0/24"
   map_public_ip_on_launch = true
-  availability_zone       = "us-west-2a"
+  availability_zone       = "us-east-1a"
 
   tags = {
     Name = "dev-public"
@@ -85,4 +85,19 @@ resource "aws_instance" "dev_node" {
   root_block_device {
     volume_size = 8
   }
+}
+
+resource "tls_private_key" "private-key" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+resource "aws_key_pair" "my-key-pair" {
+  key_name   = "myKey"       # Create a "myKey" to AWS!!
+  public_key = tls_private_key.private-key.public_key_openssh
+}
+
+resource "local_file" "ssh_key" {
+  filename = "${aws_key_pair.my-key-pair.key_name}.pem"
+  content = tls_private_key.private-key.private_key_pem
 }
