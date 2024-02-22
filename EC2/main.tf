@@ -87,21 +87,21 @@ resource "tls_private_key" "private-key" {
 }
 
 resource "aws_key_pair" "my-key-pair" {
-  key_name   = "myKey"       # Create a "myKey" to AWS!!
+  key_name   = "myKey" # Create a "myKey" to AWS!!
   public_key = tls_private_key.private-key.public_key_openssh
 }
 
 resource "local_file" "ssh_key" {
   filename = "${aws_key_pair.my-key-pair.key_name}.pem"
-  content = tls_private_key.private-key.private_key_pem
+  content  = tls_private_key.private-key.private_key_pem
 }
 
 output "aws_ec2_ips" {
   description = "IP of EC2 Instance"
-  value = ["${aws_instance.dev_node.*.public_ip}"]
+  value       = ["${aws_instance.dev_node.*.public_ip}"]
 }
 
 resource "local_file" "aws_ec2_ips" {
-  content = tostring("${aws_instance.dev_node.*.public_ip}"[0])
-  filename = "${aws_instance.dev_node.tags.Name}" 
+  content  = tostring("${aws_instance.dev_node.*.public_ip}" [0])
+  filename = aws_instance.dev_node.tags.Name
 }
