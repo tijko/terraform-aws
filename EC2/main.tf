@@ -103,5 +103,11 @@ resource "local_file" "ssh_key" {
 }
 
 output "aws_ec2_ips" {
+  description = "IP of EC2 Instance"
   value = ["${aws_instance.dev_node.*.public_ip}"]
+}
+
+resource "local_file" "aws_ec2_ips" {
+  content = tostring("${aws_instance.dev_node.*.public_ip}"[0])
+  filename = "${aws_instance.dev_node.tags.Name}" 
 }
