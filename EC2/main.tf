@@ -1,5 +1,6 @@
 module "aws_vpc" {
   source = "./modules/aws-vpc"
+  version = "0.0.1"
 }
 
 resource "aws_subnet" "tijko_public_subnet" {
