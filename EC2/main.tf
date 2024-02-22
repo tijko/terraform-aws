@@ -1,15 +1,9 @@
-resource "aws_vpc" "tijko_vpc" {
-  cidr_block           = "10.123.0.0/16"
-  enable_dns_hostnames = true
-  enable_dns_support   = true
-
-  tags = {
-    Name = "dev"
-  }
+module "aws_vpc" {
+  source = "./modules/aws-vpc"
 }
 
 resource "aws_subnet" "tijko_public_subnet" {
-  vpc_id                  = aws_vpc.tijko_vpc.id
+  vpc_id                  = module.aws_vpc.vpc_id
   cidr_block              = "10.123.1.0/24"
   map_public_ip_on_launch = true
   availability_zone       = "us-east-1a"
@@ -20,7 +14,7 @@ resource "aws_subnet" "tijko_public_subnet" {
 }
 
 resource "aws_internet_gateway" "tijko_internet_gateway" {
-  vpc_id = aws_vpc.tijko_vpc.id
+  vpc_id = module.aws_vpc.vpc_id
 
   tags = {
     Name = "tijko_igw"
@@ -28,7 +22,7 @@ resource "aws_internet_gateway" "tijko_internet_gateway" {
 }
 
 resource "aws_route_table" "tijko_public_rt" {
-  vpc_id = aws_vpc.tijko_vpc.id
+  vpc_id = module.aws_vpc.vpc_id
 
   tags = {
     Name = "dev_public_rt"
@@ -49,7 +43,7 @@ resource "aws_route_table_association" "tijko_public_assoc" {
 resource "aws_security_group" "tijko_sg" {
   name        = "public_sg"
   description = "public security group"
-  vpc_id      = aws_vpc.tijko_vpc.id
+  vpc_id      = module.aws_vpc.vpc_id
   ingress {
     from_port   = 22
     to_port     = 22
