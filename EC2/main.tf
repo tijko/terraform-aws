@@ -2,6 +2,10 @@ module "aws_vpc" {
   source = "./modules/aws-vpc"
 }
 
+module "aws_instance_type" {
+  source = "./modules/aws-instances"
+}
+
 resource "aws_subnet" "tijko_public_subnet" {
   vpc_id                  = module.aws_vpc.vpc_id
   cidr_block              = "10.123.1.0/24"
@@ -65,7 +69,7 @@ resource "aws_key_pair" "tijko_auth" {
 }
 
 resource "aws_instance" "dev_node" {
-  instance_type = "t2.micro"
+  instance_type = module.aws_instance_type.type #"t2.micro"
   ami           = data.aws_ami.server_ami.id
 
   tags = {
