@@ -76,7 +76,7 @@ resource "aws_security_group" "tijko_sg" {
 }
 
 resource "aws_key_pair" "tijko_auth" {
-  key_name   = "tijko"
+  key_name   = "tijko-pub"
   public_key = file("~/.ssh/id_rsa.pub")
 }
 
@@ -86,7 +86,7 @@ resource "tls_private_key" "private-key" {
 }
 
 resource "aws_key_pair" "tijko-kp" {
-  key_name   = "tijko"
+  key_name   = "tijko-priv"
   public_key = tls_private_key.private-key.public_key_openssh
 }
 
