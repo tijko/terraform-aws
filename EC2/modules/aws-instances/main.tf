@@ -18,26 +18,6 @@ resource "aws_instance" "dev_node" {
   }
 }
 
-resource "aws_key_pair" "tijko_auth" {
-  key_name   = "tijko"
-  public_key = file("~/.ssh/id_rsa.pub")
-}
-
-resource "tls_private_key" "private-key" {
-  algorithm = "RSA"
-  rsa_bits  = 4096
-}
-
-resource "aws_key_pair" "my-key-pair" {
-  key_name   = "myKey" # Create a "myKey" to AWS!!
-  public_key = tls_private_key.private-key.public_key_openssh
-}
-
-resource "local_file" "ssh_key" {
-  filename = "${aws_key_pair.my-key-pair.key_name}.pem"
-  content  = tls_private_key.private-key.private_key_pem
-}
-
 resource "aws_subnet" "tijko_public_subnet" {
   vpc_id                  = module.aws_vpc.vpc_id
   cidr_block              = "10.123.1.0/24"
@@ -93,4 +73,25 @@ resource "aws_security_group" "tijko_sg" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+}
+
+resource "aws_key_pair" "tijko_auth" {
+  key_name   = "tijko"
+  public_key = file("~/.ssh/id_rsa.pub")
+}
+
+resource "tls_private_key" "private-key" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+resource "aws_key_pair" "tijko-kp" {
+  key_name   = "tijko"
+  public_key = tls_private_key.private-key.public_key_openssh
+}
+
+resource "local_file" "ssh_key" {
+  filename = "${aws_key_pair.tijko-kp.key_name}.pem"
+  file_permission = "0400"
+  content  = tls_private_key.private-key.private_key_pem
 }
